@@ -93,6 +93,7 @@
       background-repeat: no-repeat;
       background-size: cover;
     } */
+
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bricklayer/0.4.2/bricklayer.min.css">
   <link rel="stylesheet" href="particles.css" media="screen" />
@@ -129,6 +130,14 @@
   <script src="paths.js"></script>
   <script src="particles.js"></script>
   <script>
+    function isHighDensity() {
+      return ((window.matchMedia && (window.matchMedia('only screen and (min-resolution: 124dpi), only screen and (min-resolution: 1.3dppx), only screen and (min-resolution: 48.8dpcm)').matches || window.matchMedia('only screen and (-webkit-min-device-pixel-ratio: 1.3), only screen and (-o-min-device-pixel-ratio: 2.6/2), only screen and (min--moz-device-pixel-ratio: 1.3), only screen and (min-device-pixel-ratio: 1.3)').matches)) || (window.devicePixelRatio && window.devicePixelRatio > 1.3));
+    }
+
+    function isRetina() {
+      return ((window.matchMedia && (window.matchMedia('only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx), only screen and (min-resolution: 75.6dpcm)').matches || window.matchMedia('only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (min--moz-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2)').matches)) || (window.devicePixelRatio && window.devicePixelRatio >= 2)) && /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
+    }
+
     var groups = [];
     var activeGroup = {
       index: 0,
@@ -233,8 +242,13 @@
       $(initPaths).each(function (index, group) {
         $(group.particles).each(function (i, p) {
 
-          p.pos_x = p.pos_x * 2;
-          p.pos_y = p.pos_y * 2;
+          if (isHighDensity() || isRetina()) {
+            p.pos_x = p.pos_x * 2;
+            p.pos_y = p.pos_y * 2;
+          } else {
+            p.pos_x = p.pos_x;
+            p.pos_y = p.pos_y;
+          }
 
           if (p.pos_x < minX)
             minX = p.pos_x;
@@ -257,7 +271,10 @@
 
 
 
-          pJS[0].pJS.fn.modes.pushParticles(1, undefined, group.index, 1, { x: p.pos_x, y: p.pos_y });
+          pJS[0].pJS.fn.modes.pushParticles(1, undefined, group.index, 1, {
+            x: p.pos_x,
+            y: p.pos_y
+          });
         });
       });
     }
